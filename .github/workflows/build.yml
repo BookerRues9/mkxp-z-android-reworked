@@ -14,7 +14,10 @@ jobs:
     name: Build APK
     runs-on: ubuntu-22.04
     env:
+      ANDROID_HOME: ${{ github.workspace }}/android-sdk
+      ANDROID_NDK_HOME: ${{ github.workspace }}/android-sdk/ndk/23.2.8568313
       ARCH: linux-x86_64
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,23 +32,20 @@ jobs:
         run: |
           sudo apt update
           curl -fo sdk-tools-linux.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          unzip sdk-tools-linux.zip -d $HOME/android-sdk/cmdline-tools
-          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          unzip sdk-tools-linux.zip -d $ANDROID_HOME/cmdline-tools
+          mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           
-          export ANDROID_HOME=$HOME/android-sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
           
           yes | sdkmanager --licenses
           sdkmanager --install "platform-tools" "platforms;android-30" "ndk;23.2.8568313" "build-tools;30.0.3"
 
-  - name: Fix permissions for get_deps.sh
-       working-directory: ${{ github.workspace }}/app/jni
-       run: chmod +x get_deps.sh
-
-  - name: Get dependencies
-       working-directory: ${{ github.workspace }}/app/jni
-       run: ./get_deps.sh
+      - name: Get dependencies
+        working-directory: ${{ github.workspace }}/app/jni
+        run: |
+          chmod +x get_deps.sh
+          ./get_deps.sh  
 
       - name: Restore cache
         id: cache-restore
@@ -58,8 +58,6 @@ jobs:
         if: steps.cache-restore.outputs.cache-hit != 'true'
         working-directory: ${{ github.workspace }}/app/jni
         run: |
-          export ANDROID_HOME=$HOME/android-sdk
-          export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
           export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a make
           make clean
@@ -68,8 +66,6 @@ jobs:
         if: steps.cache-restore.outputs.cache-hit != 'true'
         working-directory: ${{ github.workspace }}/app/jni
         run: |
-          export ANDROID_HOME=$HOME/android-sdk
-          export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
           export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
           make clean
@@ -84,7 +80,9 @@ jobs:
 
       - name: Prepare mkxp-z files
         working-directory: ${{ github.workspace }}/app/jni/mkxp-z
-        run: ./make_xxd.sh
+        run: |
+          chmod +x make_xxd.sh
+          ./make_xxd.sh
 
       - name: Build APK
         working-directory: ${{ github.workspace }}
