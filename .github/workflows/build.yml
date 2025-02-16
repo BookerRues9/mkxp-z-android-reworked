@@ -17,20 +17,18 @@ jobs:
       ANDROID_HOME: ${{ github.workspace }}/android-sdk
       ANDROID_NDK_HOME: ${{ github.workspace }}/android-sdk/ndk/23.2.8568313
       ARCH: linux-x86_64
+      GEM_HOME: $HOME/.gem  # Definir GEM_HOME aquí asegura persistencia en todos los pasos
+      PATH: $HOME/.gem/bin:$PATH  # Añadir RubyGems al PATH
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set GEM_HOME to avoid permission issues
-        run: echo "GEM_HOME=$HOME/.gem" >> $GITHUB_ENV
-
-      - name: Ensure correct permissions for RubyGems
+      - name: Configure RubyGems to avoid permission issues
         run: |
           mkdir -p $HOME/.gem
-          echo 'export GEM_HOME=$HOME/.gem' >> $HOME/.bashrc
-          echo 'export PATH=$HOME/.gem/bin:$PATH' >> $HOME/.bashrc
-          source $HOME/.bashrc
+          echo "export GEM_HOME=$HOME/.gem" >> $GITHUB_ENV
+          echo "export PATH=$HOME/.gem/bin:$PATH" >> $GITHUB_ENV
 
       - name: Install required dependencies
         run: sudo apt update && sudo apt install -y tar
@@ -73,6 +71,7 @@ jobs:
         run: |
           export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a make
+          make install  # IMPORTANTE: instala librerías necesarias
           make clean
 
       - name: Build libraries (ARMv8 64-bit)
@@ -81,6 +80,7 @@ jobs:
         run: |
           export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
+          make install  # IMPORTANTE: instala librerías necesarias
           make clean
 
       - name: Save cache
