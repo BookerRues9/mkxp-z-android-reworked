@@ -23,9 +23,9 @@ jobs:
         with:
           ruby-version: '3.1'
           bundler-cache: false
-          - name: Get dependencies
-          working-directory: ${{ github.workspace }}/app/jni
-          run: |
+      - name: Get dependencies
+        working-directory: ${{ github.workspace }}/app/jni
+        run: |
             chmod +x get_deps.sh
             ./get_deps.sh  
       - name: Restore cache
