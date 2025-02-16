@@ -17,12 +17,13 @@ jobs:
       ANDROID_HOME: ${{ github.workspace }}/android-sdk
       ANDROID_NDK_HOME: ${{ github.workspace }}/android-sdk/ndk/23.2.8568313
       ARCH: linux-x86_64
-      GEM_HOME: ${{ github.workspace }}/.gem  # Definimos GEM_HOME para evitar permisos
-      PATH: ${{ github.workspace }}/.gem/bin:${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ github.workspace }}/android-sdk/platform-tools:$PATH
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install required dependencies
+        run: sudo apt update && sudo apt install -y tar
 
       - name: Setup Java 17
         uses: actions/setup-java@v3
@@ -95,4 +96,3 @@ jobs:
         with:
           name: apk-debug
           path: app/build/outputs/apk/debug/*.apk
-
