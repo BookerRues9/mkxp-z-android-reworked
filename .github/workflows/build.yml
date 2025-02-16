@@ -39,9 +39,13 @@ jobs:
           yes | sdkmanager --licenses
           sdkmanager --install "platform-tools" "platforms;android-30" "ndk;23.2.8568313" "build-tools;30.0.3"
 
-      - name: Get dependencies
-        working-directory: ${{ github.workspace }}/app/jni
-        run: ./get_deps.sh
+  - name: Fix permissions for get_deps.sh
+       working-directory: ${{ github.workspace }}/app/jni
+       run: chmod +x get_deps.sh
+
+  - name: Get dependencies
+       working-directory: ${{ github.workspace }}/app/jni
+       run: ./get_deps.sh
 
       - name: Restore cache
         id: cache-restore
