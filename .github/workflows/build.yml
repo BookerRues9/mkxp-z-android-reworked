@@ -17,21 +17,25 @@ jobs:
       ANDROID_HOME: ${{ github.workspace }}/android-sdk
       ANDROID_NDK_HOME: ${{ github.workspace }}/android-sdk/ndk/23.2.8568313
       ARCH: linux-x86_64
-      GEM_HOME: $HOME/.gem  # Definir GEM_HOME aquí asegura persistencia en todos los pasos
-      PATH: $HOME/.gem/bin:$PATH  # Añadir RubyGems al PATH
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure RubyGems to avoid permission issues
+      - name: Set GEM_HOME to avoid permission issues
+        run: echo "GEM_HOME=$HOME/.gem" >> $GITHUB_ENV
+
+      - name: Ensure correct permissions for RubyGems
         run: |
           mkdir -p $HOME/.gem
-          echo "export GEM_HOME=$HOME/.gem" >> $GITHUB_ENV
-          echo "export PATH=$HOME/.gem/bin:$PATH" >> $GITHUB_ENV
+          echo 'export GEM_HOME=$HOME/.gem' >> $HOME/.bashrc
+          echo 'export PATH=$HOME/.gem/bin:$PATH' >> $HOME/.bashrc
+          source $HOME/.bashrc
 
       - name: Install required dependencies
-        run: sudo apt update && sudo apt install -y tar
+        run: |
+          sudo apt update
+          sudo apt install -y tar unzip
 
       - name: Setup Java 17
         uses: actions/setup-java@v3
@@ -44,11 +48,9 @@ jobs:
           sudo apt update
           curl -fo sdk-tools-linux.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
           mkdir -p $ANDROID_HOME/cmdline-tools
-          unzip sdk-tools-linux.zip -d $ANDROID_HOME/cmdline-tools
+          /usr/bin/unzip sdk-tools-linux.zip -d $ANDROID_HOME/cmdline-tools
           mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
-          
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-          
           yes | sdkmanager --licenses
           sdkmanager --install "platform-tools" "platforms;android-30" "ndk;23.2.8568313" "build-tools;30.0.3"
 
@@ -71,7 +73,6 @@ jobs:
         run: |
           export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a make
-          make install  # IMPORTANTE: instala librerías necesarias
           make clean
 
       - name: Build libraries (ARMv8 64-bit)
@@ -80,7 +81,6 @@ jobs:
         run: |
           export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
-          make install  # IMPORTANTE: instala librerías necesarias
           make clean
 
       - name: Save cache
