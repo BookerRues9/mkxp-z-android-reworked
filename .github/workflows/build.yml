@@ -22,7 +22,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
+      - name: Set up Docker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            ruby:3.1 bash -c "make install"
       - name: Install required dependencies (tar, curl, unzip)
         run: sudo apt update && sudo apt install -y tar curl unzip
 
