@@ -25,7 +25,10 @@ jobs:
           bundler-cache: false
       - name: Get dependencies
         working-directory: ${{ github.workspace }}/app/jni
-        run: ./get_deps.sh
+        - name: Set execution permissions
+         run: chmod +x get_deps.sh
+- name: Run script
+  run: ./get_deps.sh
       - name: Restore cache
         id: cache-restore
         uses: actions/cache/restore@v3
