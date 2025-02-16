@@ -19,22 +19,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
         with:
-          ruby-version: '3.1'
-          bundler-cache: false
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Install Android SDK and NDK
         run: |
           sudo apt update
-          sudo apt install -y openjdk-17-jdk unzip
           curl -fo sdk-tools-linux.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
           mkdir -p $HOME/android-sdk/cmdline-tools
           unzip sdk-tools-linux.zip -d $HOME/android-sdk/cmdline-tools
           mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+          
           export ANDROID_HOME=$HOME/android-sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          
           yes | sdkmanager --licenses
           sdkmanager --install "platform-tools" "platforms;android-30" "ndk;23.2.8568313" "build-tools;30.0.3"
 
