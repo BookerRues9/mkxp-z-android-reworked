@@ -17,6 +17,8 @@ jobs:
       ANDROID_HOME: ${{ github.workspace }}/android-sdk
       ANDROID_NDK_HOME: ${{ github.workspace }}/android-sdk/ndk/23.2.8568313
       ARCH: linux-x86_64
+      GEM_HOME: ${{ github.workspace }}/.gem  # Definimos GEM_HOME para evitar permisos
+      PATH: ${{ github.workspace }}/.gem/bin:${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ github.workspace }}/android-sdk/platform-tools:$PATH
 
     steps:
       - name: Checkout code
@@ -93,3 +95,4 @@ jobs:
         with:
           name: apk-debug
           path: app/build/outputs/apk/debug/*.apk
+
