@@ -25,10 +25,13 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: false
       
-      - name: Install NDK 23.2.8568313
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
         run: |
-          sdkmanager --install "ndk;23.2.8568313"
-          yes | sdkmanager --licenses
+          yes | sdkmanager --install "ndk;23.2.8568313"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
       
       - name: Get dependencies
         working-directory: ${{ github.workspace }}/app/jni
