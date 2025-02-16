@@ -18,14 +18,19 @@ jobs:
       ANDROID_NDK_HOME: ${{ github.workspace }}/android-sdk/ndk/23.2.8568313
       ARCH: linux-x86_64
       GEM_HOME: ${{ github.workspace }}/.gem
-      PATH: ${{ github.workspace }}/.gem/bin:$PATH
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install required dependencies
-        run: sudo apt update && sudo apt install -y tar
+      - name: Install required dependencies (tar, curl, unzip)
+        run: sudo apt update && sudo apt install -y tar curl unzip
+
+      - name: Set up Ruby permissions
+        run: |
+          mkdir -p $GEM_HOME
+          echo "export GEM_HOME=$GEM_HOME" >> $GITHUB_ENV
+          echo "export PATH=$GEM_HOME/bin:$PATH" >> $GITHUB_ENV
 
       - name: Setup Java 17
         uses: actions/setup-java@v3
