@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential cmake curl unzip gpg ruby-full
+          sudo apt install -y build-essential cmake ruby-full curl unzip gpg openjdk-17-jdk
 
       - name: Set up Ruby
         run: |
@@ -28,35 +28,27 @@ jobs:
           rvm install 3.1
           rvm use 3.1 --default
 
-      - name: Install Java 17 (para evitar errores con sdkmanager)
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
       - name: Set up Android SDK and NDK
         run: |
-          export ANDROID_HOME=$HOME/android-sdk
-          export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
-          mkdir -p $ANDROID_HOME/cmdline-tools
-          cd $ANDROID_HOME/cmdline-tools
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/23.2.8568313
 
-          # Descargar e instalar cmdline-tools
-          curl -sSL https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip -o cmdline-tools.zip
-          unzip cmdline-tools.zip
-          mv cmdline-tools latest
+          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+          cd $ANDROID_SDK_ROOT/cmdline-tools
+          curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip sdk-tools.zip -d latest
+          rm sdk-tools.zip
 
-          # Instalar SDK y NDK
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --install "ndk;23.2.8568313" "platform-tools"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/tools/bin:$PATH" >> $GITHUB_ENV
 
-      - name: Configure environment variables
+      - name: Install Android SDK and NDK
         run: |
-          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$HOME/android-sdk/ndk/23.2.8568313" >> $GITHUB_ENV
-          echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$HOME/android-sdk/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH" >> $GITHUB_ENV
-
-      - name: Verify NDK installation
-        run: ls -R $ANDROID_NDK_HOME
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-31" "build-tools;31.0.0" "ndk;23.2.8568313"
 
       - name: Clone mkxp-z-android
         run: git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
@@ -67,12 +59,12 @@ jobs:
           chmod +x get_deps.sh
           ./get_deps.sh
 
-      - name: Build for 32-bit (armeabi-v7a)
+      - name: Build for 32-bit
         run: |
           cd mkxp-z-android-reworked/app/jni
           HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a make
 
-      - name: Build for 64-bit (arm64-v8a)
+      - name: Build for 64-bit
         run: |
           cd mkxp-z-android-reworked/app/jni
           HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
