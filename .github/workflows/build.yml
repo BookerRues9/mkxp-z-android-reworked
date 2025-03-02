@@ -65,7 +65,7 @@ jobs:
           ./gradlew assembleDebug
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mkxp-z-android-apk
           path: mkxp-z-android-reworked/app/build/outputs/apk/debug/*.apk
