@@ -1,28 +1,64 @@
-# mkxp-z for Android
+ESPAÑOL
+# mkxp-z para Android
 
-This is port of [mkxp-z](https://github.com/mkxp-z/mkxp-z) to Android.
+Este es un puerto de [mkxp-z](https://github.com/mkxp-z/mkxp-z) para Android.
 
-Currently, it's *almost* works properly (likely, *experemental*),
-but enough to have running RPG Maker XP, VX and VX Ace games.
+Actualmente, funciona *casi* correctamente (probablemente, *experimentalmente*),
+pero lo suficiente como para ejecutar los juegos RPG Maker XP
+repositorio original de [mkxp-z-android] (https://github.com/thehatkid/mkxp-z-android)
 
-## Running mkxp-z on Android
+## Ejecutar mkxp-z en Android
 
-0. ~~Build mkxp-z application~~ (TODO: make tutorial or public release)
-1. Install APK on your Android device
-2. Create `mkxp-z` folder on internal storage (e.g. `/storage/emulated/0/mkxp-z`)
-3. You can put custom mkxp-z config ([mkxp.json](app/jni/mkxp-z/mkxp.json)) in `mkxp-z` folder
-   (e.g. preload scripts or change game directory to load game from external storage)
-4. Copy game files into folder `mkxp-z`
-   (or to other game folder that defined in your `mkxp.json`)
-5. Run mkxp-z, grant access to storage, and have fun, I think?
+0. ~~Crear la aplicación mkxp-z~~
+1. Instalar el APK en tu dispositivo Android
+2. Crear la carpeta `mkxp-z` en el almacenamiento interno (p. ej. `/storage/emulated/0/mkxp-z`)
+3. Puedes poner una configuración personalizada de mkxp-z ([mkxp.json](app/jni/mkxp-z/mkxp.json)) en la carpeta `mkxp-z`
+(p. ej., precargar scripts o cambiar el directorio del juego para cargar el juego desde el almacenamiento externo)
+4. Copiar los archivos del juego en la carpeta `mkxp-z`
+(o en otra carpeta del juego definida en tu `mkxp.json`)
+5. Ejecutar mkxp-z, conceder acceso al almacenamiento y divertirse, ¿creo?
 
-## Known issues
+## Problemas conocidos
 
-- You can't write saves/files in external storage (such as SD Card) on lower than Android 10
-  (On Android 11+ granting All Files Access means You can write on external storages)
+- No puedes escribir partidas guardadas/archivos en almacenamiento externo (como la tarjeta SD) en versiones anteriores a Android 10
+(En Android 11+, otorgar acceso a todos los archivos significa que puedes escribir en almacenamientos externos)
 
-## To Do...
+## Por hacer...
+- Corregir la compilación de extensiones Ruby en el entorno MSYS2 de Windows
+- *...y mucho más, ¿creo?*
 
-- mkxp-z Android compilation tutorial on GitHub Wiki page
-- Fix compile Ruby extensions in Windows MSYS2 environment
-- *...and much more, I think?*
+## Tutotial
+1 requisitos 
+-Ubuntu ubuntu-22.04
+-Android Studio ultima version
+-android SDK y NDK 23.2.8568313
+-Ruby version 3.0+
+-cmake build tools
+2 preparación del entorno
+-primero actualizamos dependencias : sudo apt update
+-en la consola de ubuntu instalamos : sudo apt install build-essential cmake ruby-full
+-instalamos rvm : 
+sudo apt install curl gpg -y
+curl -sSL https://get.rvm.io/ | bash
+source ~/.rvm/scripts/rvm
+después ejecutamos este comando al finalizar usamos ruby -v
+rvm install 3.1
+rvm use 3.1 --default
+3 clonamos el repositorio 
+git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
+4 abrimos en la consola el proyecto de mkxp-z-android
+-luego vamos a : cd app/jni
+-descargamos las dependencias : chmod +x get_deps.sh
+-ejecutamos el archivo : chmod +x get_deps.sh
+5 luego de descargar las dependencias damos las rutas donde se ubica todo ejecutamos los siguientes comandos 
+-export ANDROID_HOME=/home/TUUSUARIO/Android/Sdk
+-export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
+-export ARCH=linux-x86_64
+-export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH
+6 compilar las dependencias
+**para 32 bits**
+HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a
+**para 64 bits**
+HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
+si quieres compilar solamente pon make
+7 luego de compilar las dependencias abre el proyecto en android studio y compila el apk 
