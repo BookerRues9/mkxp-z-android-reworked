@@ -28,7 +28,7 @@ but enough to run RPG Maker XP games
 - Fix Ruby extensions compilation in Windows MSYS2 environment
 - *...and much more, I think?*
 
-## Tutotial
+## Tutorial
 ## requirements
 - Ubuntu ubuntu-22.04
 - Android Studio latest version
@@ -96,7 +96,7 @@ pero lo suficiente como para ejecutar los juegos RPG Maker XP
 - Corregir la compilación de extensiones Ruby en el entorno MSYS2 de Windows
 - *...y mucho más, ¿creo?*
 
-## Tutotial
+## Tutorial
 ## requisitos 
 - Ubuntu ubuntu-22.04
 - Android Studio ultima version
