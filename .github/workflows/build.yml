@@ -15,25 +15,36 @@ jobs:
 
       - name: Install Android SDK and NDK
         run: |
-          sudo mkdir -p /home/runner/android-sdk
+          # Crear directorio del SDK
+          sudo mkdir -p /home/runner/android-sdk/cmdline-tools
+          cd /home/runner/android-sdk/cmdline-tools
+
+          # Descargar Android Command Line Tools
+          sudo curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          sudo unzip sdk-tools.zip -d tools
+          sudo rm sdk-tools.zip
+
+          # Configurar rutas
           export ANDROID_HOME=/home/runner/android-sdk
           export ANDROID_SDK_ROOT=$ANDROID_HOME
-          export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
-          
-          sdkmanager --install "cmdline-tools;latest"
-          sdkmanager --install "platform-tools"
-          sdkmanager --install "platforms;android-30"
-          sdkmanager --install "ndk;23.2.8568313"
+          export PATH=$ANDROID_HOME/cmdline-tools/tools/bin:$PATH
 
+          # Asegurar que sdkmanager funcione
+          sdkmanager --version || echo "sdkmanager no encontrado"
+
+          # Instalar SDK y NDK específico
+          yes | sdkmanager --licenses
+          sdkmanager --install "platform-tools" "platforms;android-30" "ndk;23.2.8568313"
+
+          # Exportar variables de entorno
           echo "export ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "export ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+          echo "export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_HOME/cmdline-tools/tools/bin:$PATH" >> $GITHUB_ENV
           echo "export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH" >> $GITHUB_ENV
-          
 
       - name: Verify NDK Version
         run: |
-          ls -la $ANDROID_NDK_HOME
           echo "Using NDK version:"
           cat $ANDROID_NDK_HOME/source.properties
 
