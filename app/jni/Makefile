@@ -6,7 +6,8 @@ NPROC     := $(shell nproc)
 # (Default: 21 - Android 5.0 Lollipop)
 # See https://apilevels.com/ for Android API versions.
 # Note: If you building for 64-bit, you should target 21 and higher.
-API ?= 21
+# api 22 supports 64 bits
+API ?= 22
 
 # Android CPU specific variables to build:
 # (Default: ARMv7-A 32-bit)
