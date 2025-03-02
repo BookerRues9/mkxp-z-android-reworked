@@ -1,83 +1,79 @@
-name: Build mkxp-z Android
+name: Build Android Project
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Install Android SDK and NDK
+        run: |
+          sudo apt update
+          sudo apt install -y unzip wget
+
+          # Descargar e instalar el Command Line Tools de Android
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
+          unzip commandlinetools-linux-10406996_latest.zip
+          mv cmdline-tools latest
+          export ANDROID_HOME=$HOME/android-sdk
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+          export PATH=$ANDROID_HOME/platform-tools:$PATH
+
+          # Aceptar licencias de Android SDK
+          yes | sdkmanager --licenses
+
+          # Instalar Android SDK y NDK 23.2.8568313
+          sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "ndk;23.2.8568313"
 
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential cmake curl unzip gpg openjdk-17-jdk
+          sudo apt install -y build-essential cmake ruby-full curl gpg
 
       - name: Install RVM and Ruby
         run: |
           curl -sSL https://get.rvm.io | bash -s stable
           source ~/.rvm/scripts/rvm
-          rvm install 3.1.4
-          rvm use 3.1.4 --default
+          rvm install 3.1.5
+          rvm use 3.1.5 --default
+          ruby -v
 
-      - name: Verify Ruby installation
-        run: ruby -v
-      - name: Set up Android SDK and NDK
+      - name: Clone the repository
         run: |
-          export ANDROID_SDK_ROOT=$HOME/android-sdk
-          export ANDROID_HOME=$ANDROID_SDK_ROOT
-          export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/23.2.8568313
-
-          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
-          cd $ANDROID_SDK_ROOT/cmdline-tools
-          curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip sdk-tools.zip -d latest
-          rm sdk-tools.zip
-
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/tools/bin:$PATH" >> $GITHUB_ENV
-
-      - name: Install Android SDK and NDK
-        run: |
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-31" "build-tools;31.0.0" "ndk;23.2.8568313"
-
-      - name: Clone mkxp-z-android
-        run: git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
-
-      - name: Download dependencies
-        run: |
+          git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
           cd mkxp-z-android-reworked/app/jni
           chmod +x get_deps.sh
           ./get_deps.sh
 
-      - name: Build for 32-bit
+      - name: Set environment variables
+        run: |
+          echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
+          echo "export ARCH=linux-x86_64" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Build JNI components
         run: |
           cd mkxp-z-android-reworked/app/jni
-          HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a make
+          make
 
-      - name: Build for 64-bit
-        run: |
-          cd mkxp-z-android-reworked/app/jni
-          HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
-
-      - name: Compile APK
+      - name: Build APK using Gradle
         run: |
           cd mkxp-z-android-reworked
+          chmod +x gradlew
           ./gradlew assembleDebug
-
+          
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mkxp-z-android-apk
-          path: mkxp-z-android-reworked/app/build/outputs/apk/debug/*.apk
+          name: built-apk
+          path: mkxp-z-android-reworked/app/build/outputs/apk/debug/app-debug.apk
