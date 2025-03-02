@@ -19,31 +19,41 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential cmake ruby-full curl unzip gpg
+          sudo apt install -y build-essential cmake curl unzip gpg ruby-full
 
       - name: Set up Ruby
         run: |
-          curl -sSL https://get.rvm.io/ | bash
+          curl -sSL https://get.rvm.io | bash -s stable
           source ~/.rvm/scripts/rvm
           rvm install 3.1
           rvm use 3.1 --default
+
+      - name: Install Java 17 (para evitar errores con sdkmanager)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Set up Android SDK and NDK
         run: |
           export ANDROID_HOME=$HOME/android-sdk
           export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
-          export ARCH=linux-x86_64
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH" >> $GITHUB_ENV
-
           mkdir -p $ANDROID_HOME/cmdline-tools
           cd $ANDROID_HOME/cmdline-tools
+
+          # Descargar e instalar cmdline-tools
           curl -sSL https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip -o cmdline-tools.zip
           unzip cmdline-tools.zip
           mv cmdline-tools latest
 
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --install "ndk;23.2.8568313" "platform-tools"
+          # Instalar SDK y NDK
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --install "ndk;23.2.8568313" "platform-tools"
+
+      - name: Configure environment variables
+        run: |
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$HOME/android-sdk/ndk/23.2.8568313" >> $GITHUB_ENV
+          echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$HOME/android-sdk/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH" >> $GITHUB_ENV
 
       - name: Verify NDK installation
         run: ls -R $ANDROID_NDK_HOME
