@@ -50,7 +50,7 @@ but enough to run RPG Maker XP games
 ## we open the mkxp-z-android project in the console
 - then we go to: cd app/jni
 - we download the dependencies: chmod +x get_deps.sh
-- we run the file: chmod +x get_deps.sh
+- we run the file: ./get_deps.sh
 ## after downloading the dependencies we give the paths where everything is located we run the following commands
 - export ANDROID_HOME=/home/YOURSUMER/Android/Sdk
 - export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
@@ -118,7 +118,7 @@ pero lo suficiente como para ejecutar los juegos RPG Maker XP
 ## abrimos en la consola el proyecto de mkxp-z-android
 - luego vamos a : cd app/jni
 - descargamos las dependencias : chmod +x get_deps.sh
-- ejecutamos el archivo : chmod +x get_deps.sh
+- ejecutamos el archivo : ./get_deps.sh
 ## luego de descargar las dependencias damos las rutas donde se ubica todo ejecutamos los siguientes comandos 
 - export ANDROID_HOME=/home/TUUSUARIO/Android/Sdk
 - export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
