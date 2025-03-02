@@ -15,24 +15,27 @@ jobs:
 
       - name: Install Android SDK and NDK
         run: |
-          sudo apt update
-          sudo apt install -y unzip wget
+          sudo mkdir -p /home/runner/android-sdk
+          export ANDROID_HOME=/home/runner/android-sdk
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
+          export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
+          
+          sdkmanager --install "cmdline-tools;latest"
+          sdkmanager --install "platform-tools"
+          sdkmanager --install "platforms;android-30"
+          sdkmanager --install "ndk;23.2.8568313"
 
-          # Descargar e instalar el Command Line Tools de Android
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          cd $HOME/android-sdk/cmdline-tools
-          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
-          unzip commandlinetools-linux-10406996_latest.zip
-          mv cmdline-tools latest
-          export ANDROID_HOME=$HOME/android-sdk
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
-          export PATH=$ANDROID_HOME/platform-tools:$PATH
+          echo "export ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "export ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH" >> $GITHUB_ENV
 
-          # Aceptar licencias de Android SDK
-          yes | sdkmanager --licenses
+      - name: Verify NDK Version
+        run: |
+          ls -la $ANDROID_NDK_HOME
+          echo "Using NDK version:"
+          cat $ANDROID_NDK_HOME/source.properties
 
-          # Instalar Android SDK y NDK 23.2.8568313
-          sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "ndk;23.2.8568313"
 
       - name: Install dependencies
         run: |
@@ -56,13 +59,6 @@ jobs:
           cd mkxp-z-android-reworked/app/jni
           chmod +x get_deps.sh
           ./get_deps.sh
-
-      - name: Set environment variables
-        run: |
-          echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
-          echo "export ARCH=linux-x86_64" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH" >> $GITHUB_ENV
 
       - name: Build JNI components
         run: |
