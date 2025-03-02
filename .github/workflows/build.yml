@@ -40,6 +40,11 @@ jobs:
           echo "ARCH=linux-x86_64" >> $GITHUB_ENV
           echo "PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH" >> $GITHUB_ENV
 
+      - name: Install Android NDK
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;23.2.8568313"
+          ls -l $ANDROID_HOME/ndk
+
       - name: Clone mkxp-z-android
         run: git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
 
