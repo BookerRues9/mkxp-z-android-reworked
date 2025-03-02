@@ -28,13 +28,13 @@ repositorio original de [mkxp-z-android] (https://github.com/thehatkid/mkxp-z-an
 - *...y mucho más, ¿creo?*
 
 ## Tutotial
-1 requisitos 
+## requisitos 
 -Ubuntu ubuntu-22.04
 -Android Studio ultima version
 -android SDK y NDK 23.2.8568313
 -Ruby version 3.0+
 -cmake build tools
-2 preparación del entorno
+## preparación del entorno
 -primero actualizamos dependencias : sudo apt update
 -en la consola de ubuntu instalamos : sudo apt install build-essential cmake ruby-full
 -instalamos rvm : 
@@ -44,21 +44,21 @@ source ~/.rvm/scripts/rvm
 después ejecutamos este comando al finalizar usamos ruby -v
 rvm install 3.1
 rvm use 3.1 --default
-3 clonamos el repositorio 
+## clonamos el repositorio 
 git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
-4 abrimos en la consola el proyecto de mkxp-z-android
+## abrimos en la consola el proyecto de mkxp-z-android
 -luego vamos a : cd app/jni
 -descargamos las dependencias : chmod +x get_deps.sh
 -ejecutamos el archivo : chmod +x get_deps.sh
-5 luego de descargar las dependencias damos las rutas donde se ubica todo ejecutamos los siguientes comandos 
+## luego de descargar las dependencias damos las rutas donde se ubica todo ejecutamos los siguientes comandos 
 -export ANDROID_HOME=/home/TUUSUARIO/Android/Sdk
 -export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
 -export ARCH=linux-x86_64
 -export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH
-6 compilar las dependencias
-**para 32 bits**
+## compilar las dependencias
+## **para 32 bits**
 HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a
-**para 64 bits**
+## **para 64 bits**
 HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
 si quieres compilar solamente pon make
 7 luego de compilar las dependencias abre el proyecto en android studio y compila el apk 
