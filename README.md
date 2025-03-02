@@ -29,36 +29,36 @@ repositorio original de [mkxp-z-android] (https://github.com/thehatkid/mkxp-z-an
 
 ## Tutotial
 ## requisitos 
--Ubuntu ubuntu-22.04
--Android Studio ultima version
--android SDK y NDK 23.2.8568313
--Ruby version 3.0+
--cmake build tools
+- Ubuntu ubuntu-22.04
+- Android Studio ultima version
+- android SDK y NDK 23.2.8568313
+- Ruby version 3.0+
+- cmake build tools
 ## preparación del entorno
--primero actualizamos dependencias : sudo apt update
--en la consola de ubuntu instalamos : sudo apt install build-essential cmake ruby-full
--instalamos rvm : 
-sudo apt install curl gpg -y
-curl -sSL https://get.rvm.io/ | bash
-source ~/.rvm/scripts/rvm
-después ejecutamos este comando al finalizar usamos ruby -v
-rvm install 3.1
-rvm use 3.1 --default
+- primero actualizamos dependencias : sudo apt update
+- en la consola de ubuntu instalamos : sudo apt install build-essential cmake ruby-full
+- instalamos rvm : 
+- sudo apt install curl gpg -y
+- curl -sSL https://get.rvm.io/ | bash
+- source ~/.rvm/scripts/rvm
+- después ejecutamos este comando al finalizar usamos ruby -v
+- rvm install 3.1
+- rvm use 3.1 --default
 ## clonamos el repositorio 
-git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
+- git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
 ## abrimos en la consola el proyecto de mkxp-z-android
--luego vamos a : cd app/jni
--descargamos las dependencias : chmod +x get_deps.sh
--ejecutamos el archivo : chmod +x get_deps.sh
+- luego vamos a : cd app/jni
+- descargamos las dependencias : chmod +x get_deps.sh
+- ejecutamos el archivo : chmod +x get_deps.sh
 ## luego de descargar las dependencias damos las rutas donde se ubica todo ejecutamos los siguientes comandos 
--export ANDROID_HOME=/home/TUUSUARIO/Android/Sdk
--export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
--export ARCH=linux-x86_64
--export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH
+- export ANDROID_HOME=/home/TUUSUARIO/Android/Sdk
+- export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
+- export ARCH=linux-x86_64
+- export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH
 ## compilar las dependencias
 ## **para 32 bits**
-HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a
+- HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a
 ## **para 64 bits**
-HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
-si quieres compilar solamente pon make
-7 luego de compilar las dependencias abre el proyecto en android studio y compila el apk 
+- HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
+- si quieres compilar solamente pon make
+## luego de compilar las dependencias abre el proyecto en android studio y compila el apk 
