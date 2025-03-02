@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.hatkid.mkxpz"
-        minSdk 22
+        minSdk 23
         targetSdk 33
         versionCode 11
         versionName "0.1.1"
