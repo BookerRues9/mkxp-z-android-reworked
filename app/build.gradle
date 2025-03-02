@@ -48,6 +48,7 @@ android {
             path "jni/Android.mk"
         }
     }
+    ndkVersion '23.2.8568313'
 }
 
 dependencies {
