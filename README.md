@@ -6,7 +6,7 @@ This is a port of [mkxp-z](https://github.com/mkxp-z/mkxp-z) for Android.
 Currently, it works *almost* correctly (probably *experimentally*),
 but enough to run RPG Maker XP games
 ## original repo of [mkxp-z-android] 
-- (https://github.com/thehatkid/mkxp-z-android)
+- https://github.com/thehatkid/mkxp-z-android
 
 ## Running mkxp-z on Android
 
@@ -74,7 +74,7 @@ Este es un puerto de [mkxp-z](https://github.com/mkxp-z/mkxp-z) para Android.
 Actualmente, funciona *casi* correctamente (probablemente, *experimentalmente*),
 pero lo suficiente como para ejecutar los juegos RPG Maker XP
 ## repositorio original de [mkxp-z-android] 
-- (https://github.com/thehatkid/mkxp-z-android)
+- https://github.com/thehatkid/mkxp-z-android
 
 ## Ejecutar mkxp-z en Android
 
