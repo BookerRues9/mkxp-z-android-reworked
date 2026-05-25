@@ -1,4 +1,10 @@
-[![Actions Status](https://github.com/BookerRues9/mkxp-z-android-reworked/workflows/Android%20Build%20%26%20Release/badge.svg)](https://github.com/BookerRues9/mkxp-z-android-reworked/actions?query=workflow%3A"Android+Build+%26+Release")
+# mkxp-z Android Reworked
+
+[![Android Build](https://github.com/BookerRues9/mkxp-z-android-reworked/workflows/Android%20Build%20%26%20Release/badge.svg)](https://github.com/BookerRues9/mkxp-z-android-reworked/actions/workflows/android.yml)
+[![GitHub release](https://img.shields.io/github/v/release/BookerRues9/mkxp-z-android-reworked)](https://github.com/BookerRues9/mkxp-z-android-reworked/releases)
+[![GitHub downloads](https://img.shields.io/github/downloads/BookerRues9/mkxp-z-android-reworked/total)](https://github.com/BookerRues9/mkxp-z-android-reworked/releases)
+
+Android port of mkxp-z focused on RPG Maker XP game compatibility.
 
 ENGLISH
 # mkxp-z for Android
