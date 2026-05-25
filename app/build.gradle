@@ -33,7 +33,7 @@ android {
             enable true
             reset()
             // You can build also 'x86' and 'x86_64' if you want (useful for AVD debugging)
-            include 'arm64-v8a'
+            include 'arm64-v8a', 'armeabi-v7a'
             universalApk true
         }
     }
