@@ -3,140 +3,141 @@
 [![Android Build](https://github.com/BookerRues9/mkxp-z-android-reworked/workflows/Android%20Build%20%26%20Release/badge.svg)](https://github.com/BookerRues9/mkxp-z-android-reworked/actions/workflows/android.yml)
 [![GitHub release](https://img.shields.io/github/v/release/BookerRues9/mkxp-z-android-reworked)](https://github.com/BookerRues9/mkxp-z-android-reworked/releases)
 [![GitHub downloads](https://img.shields.io/github/downloads/BookerRues9/mkxp-z-android-reworked/total)](https://github.com/BookerRues9/mkxp-z-android-reworked/releases)
+[![GitHub stars](https://img.shields.io/github/stars/BookerRues9/mkxp-z-android-reworked?style=social)](https://github.com/BookerRues9/mkxp-z-android-reworked/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/BookerRues9/mkxp-z-android-reworked?style=social)](https://github.com/BookerRues9/mkxp-z-android-reworked/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/BookerRues9/mkxp-z-android-reworked)](https://github.com/BookerRues9/mkxp-z-android-reworked/issues)
+[![Last Commit](https://img.shields.io/github/last-commit/BookerRues9/mkxp-z-android-reworked)](https://github.com/BookerRues9/mkxp-z-android-reworked/commits/main)
+[![License](https://img.shields.io/github/license/BookerRues9/mkxp-z-android-reworked)](LICENSE)
 
-Android port of mkxp-z focused on RPG Maker XP game compatibility.
+Android port of [mkxp-z](https://github.com/mkxp-z/mkxp-z) focused on running RPG Maker XP games on Android devices.
 
-ENGLISH
-# mkxp-z for Android
+---
 
-This is a port of [mkxp-z](https://github.com/mkxp-z/mkxp-z) for Android.
+## Overview
 
-Currently, it works *almost* correctly (probably *experimentally*),
-but enough to run RPG Maker XP games
-## original repo of [mkxp-z-android] 
-- https://github.com/thehatkid/mkxp-z-android
+`mkxp-z Android Reworked` is an experimental Android port of the mkxp-z engine.  
+The project aims to provide compatibility for RPG Maker XP games using native Android builds.
 
-## Running mkxp-z on Android
+Although still experimental, many games are already playable.
 
-0. ~~Creating the mkxp-z app~~
-1. Install the APK on your Android device
-2. Create the `mkxp-z` folder in internal storage (e.g. `/storage/emulated/0/mkxp-z`)
-3. You can put custom mkxp-z configuration ([mkxp.json](app/jni/mkxp-z/mkxp.json)) in the `mkxp-z` folder
-(e.g. preloading scripts or changing the game directory to load the game from storage external)
-4. Copy the game files into the `mkxp-z` folder
-(or another game folder defined in your `mkxp.json`)
-5. Run mkxp-z, grant storage access, and have fun, I think?
+---
 
-## Known Issues
+## Project Information
 
-- You can't write savegames/files to external storage (like SD card) on older versions than Android 10
-(On Android 11+, granting access to all files means you can write to external storage)
+| Component | Status |
+|---|---|
+| RPG Maker XP Support | ✅ |
+| Android ARM64 | ✅ |
+| Android ARMv7 | ✅ |
+| OpenGL ES Rendering | ✅ |
+| SDL Integration | ✅ |
+| Ruby Runtime | ✅ |
+| APK Builds | ✅ |
+| 16KB Page Support | ⚠️ Experimental |
 
-## To-do...
-- Fix Ruby extensions compilation in Windows MSYS2 environment
-- *...and much more, I think?*
+---
 
-## Tutorial
-## requirements
-- Ubuntu ubuntu-22.04
-- Android Studio latest version
-- android SDK and NDK 23.2.8568313
-- Ruby version 3.0+
-- cmake build tools
-## environment preparation
-- first we update dependencies : sudo apt update
-- in ubuntu console we install : sudo apt install build-essential cmake ruby-full
-- we install rvm :
-- sudo apt install curl gpg -y
-- curl -sSL https://get.rvm.io/ | bash
-- source ~/.rvm/scripts/rvm
-- then we run this command at the end we use ruby ​​-v
-- rvm install 3.1
-- rvm use 3.1 --default
-## we clone the repository
-- git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
-## we open the mkxp-z-android project in the console
-- then we go to: cd app/jni
-- we download the dependencies: chmod +x get_deps.sh
-- we run the file: ./get_deps.sh
-## after downloading the dependencies we give the paths where everything is located we run the following commands
-- export ANDROID_HOME=/home/YOURSUMER/Android/Sdk
-- export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
-- export ARCH=linux-x86_64
-- export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH
-## compile dependencies
-## **for 32 bits**
-- HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a make
-## **for 64 bits**
-- HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
-- if you want to compile just put make
-## after compiling the dependencies open the project in android studio and compile the apk
-- if you have any error create an issues
+## Original Projects
 
+| Project | Link |
+|---|---|
+| mkxp-z | https://github.com/mkxp-z/mkxp-z |
+| Original Android Port | https://github.com/thehatkid/mkxp-z-android |
 
-ESPAÑOL
-# mkxp-z para Android
+---
 
-Este es un puerto de [mkxp-z](https://github.com/mkxp-z/mkxp-z) para Android.
+# Running mkxp-z on Android
 
-Actualmente, funciona *casi* correctamente (probablemente, *experimentalmente*),
-pero lo suficiente como para ejecutar los juegos RPG Maker XP
-## repositorio original de [mkxp-z-android] 
-- https://github.com/thehatkid/mkxp-z-android
+## Installation Steps
 
-## Ejecutar mkxp-z en Android
+| Step | Description |
+|---|---|
+| 1 | Install the APK on your Android device |
+| 2 | Create the `mkxp-z` folder in internal storage |
+| 3 | Copy your RPG Maker XP game files into the folder |
+| 4 | Optional: configure `mkxp.json` |
+| 5 | Launch the app and grant storage permissions |
 
-0. ~~Crear la aplicación mkxp-z~~
-1. Instalar el APK en tu dispositivo Android
-2. Crear la carpeta `mkxp-z` en el almacenamiento interno (p. ej. `/storage/emulated/0/mkxp-z`)
-3. Puedes poner una configuración personalizada de mkxp-z ([mkxp.json](app/jni/mkxp-z/mkxp.json)) en la carpeta `mkxp-z`
-(p. ej., precargar scripts o cambiar el directorio del juego para cargar el juego desde el almacenamiento externo)
-4. Copiar los archivos del juego en la carpeta `mkxp-z`
-(o en otra carpeta del juego definida en tu `mkxp.json`)
-5. Ejecutar mkxp-z, conceder acceso al almacenamiento y divertirse, ¿creo?
+Example storage path:
 
-## Problemas conocidos
+```txt
+/storage/emulated/0/mkxp-z
+Configuration
 
-- No puedes escribir partidas guardadas/archivos en almacenamiento externo (como la tarjeta SD) en versiones anteriores a Android 10
-(En Android 11+, otorgar acceso a todos los archivos significa que puedes escribir en almacenamientos externos)
+You can place a custom configuration file here:
 
-## Por hacer...
-- Corregir la compilación de extensiones Ruby en el entorno MSYS2 de Windows
-- *...y mucho más, ¿creo?*
+app/jni/mkxp-z/mkxp.json
 
-## Tutorial
-## requisitos 
-- Ubuntu ubuntu-22.04
-- Android Studio ultima version
-- android SDK y NDK 23.2.8568313
-- Ruby version 3.0+
-- cmake build tools
-## preparación del entorno
-- primero actualizamos dependencias : sudo apt update
-- en la consola de ubuntu instalamos : sudo apt install build-essential cmake ruby-full
-- instalamos rvm : 
-- sudo apt install curl gpg -y
-- curl -sSL https://get.rvm.io/ | bash
-- source ~/.rvm/scripts/rvm
-- después ejecutamos este comando al finalizar usamos ruby -v
-- rvm install 3.1
-- rvm use 3.1 --default
-## clonamos el repositorio 
-- git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
-## abrimos en la consola el proyecto de mkxp-z-android
-- luego vamos a : cd app/jni
-- descargamos las dependencias : chmod +x get_deps.sh
-- ejecutamos el archivo : ./get_deps.sh
-## luego de descargar las dependencias damos las rutas donde se ubica todo ejecutamos los siguientes comandos 
-- export ANDROID_HOME=/home/TUUSUARIO/Android/Sdk
-- export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
-- export ARCH=linux-x86_64
-- export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH
-## compilar las dependencias
-## **para 32 bits**
-- HOST=armv7a-linux-androideabi TARGET=arm-linux-androideabi ABI=armeabi-v7a make
-## **para 64 bits**
-- HOST=aarch64-linux-android TARGET=aarch64-linux-android ABI=arm64-v8a make
-- si quieres compilar solamente pon make
-## luego de compilar las dependencias abre el proyecto en android studio y compila el apk 
-- si tienes algun error crea un issues
+Possible uses:
+
+Custom game directory
+Script preloading
+External storage paths
+Engine tweaks
+Build Environment
+Requirements
+Dependency	Version
+Ubuntu	22.04
+Android Studio	Latest
+Android SDK	Installed
+Android NDK	23.2.8568313
+Ruby	3.0+
+CMake	Installed
+Build Tools	Installed
+Environment Setup
+Install dependencies
+sudo apt update
+sudo apt install build-essential cmake ruby-full
+Install RVM
+sudo apt install curl gpg -y
+curl -sSL https://get.rvm.io/ | bash
+source ~/.rvm/scripts/rvm
+Install Ruby
+rvm install 3.1
+rvm use 3.1 --default
+ruby -v
+Clone Repository
+git clone https://github.com/BookerRues9/mkxp-z-android-reworked.git
+cd mkxp-z-android-reworked/app/jni
+Download Dependencies
+chmod +x get_deps.sh
+./get_deps.sh
+Android Environment Variables
+export ANDROID_HOME=/home/YOURUSER/Android/Sdk
+export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313
+export ARCH=linux-x86_64
+export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$ARCH/bin:$PATH
+Build Instructions
+ARMv7 Build
+HOST=armv7a-linux-androideabi \
+TARGET=arm-linux-androideabi \
+ABI=armeabi-v7a \
+make
+ARM64 Build
+HOST=aarch64-linux-android \
+TARGET=aarch64-linux-android \
+ABI=arm64-v8a \
+make
+Build Everything
+make
+Android Studio
+
+After compiling dependencies:
+
+Open the project in Android Studio
+Sync Gradle
+Build APK
+Install on device
+Known Issues
+Issue	Status
+External SD save support on Android < 10	❌
+Windows MSYS2 Ruby extensions	⚠️
+16KB Android page support	Experimental
+Some RPG Maker XP games	Partial compatibility
+Roadmap
+Improve Android compatibility
+Modernize native toolchains
+Improve Ruby extension support
+Better performance
+Improve ARM64 support
+Investigate 16KB page compatibility
