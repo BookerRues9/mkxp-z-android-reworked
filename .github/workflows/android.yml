@@ -87,6 +87,8 @@ jobs:
           TARGET=aarch64-linux-android \
           ABI=arm64-v8a \
           make -j$(nproc)
+          # Asegurar mapeo de carpetas por si acaso
+          if [ -d "build-arm64-v8a" ] && [ ! -d "build-arm64" ]; then ln -s build-arm64-v8a build-arm64; fi
 
       - name: Compile native deps — armeabi-v7a (32-bit)
         working-directory: app/jni
@@ -95,6 +97,9 @@ jobs:
           TARGET=arm-linux-androideabi \
           ABI=armeabi-v7a \
           make -j$(nproc)
+          # Solución al error CXX1405: Forzar enlace o copia si la carpeta nativa se generó con otro nombre
+          if [ -d "build-armv7a" ] && [ ! -d "build-armeabi-v7a" ]; then cp -r build-armv7a build-armeabi-v7a; fi
+          if [ -d "build" ] && [ ! -d "build-armeabi-v7a" ]; then cp -r build build-armeabi-v7a; fi
 
       # ── 9. Make Gradle wrapper executable ────────────────────────────────────
       - name: Grant execute permission for gradlew
