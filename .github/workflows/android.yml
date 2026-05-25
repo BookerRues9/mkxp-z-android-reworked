@@ -43,16 +43,11 @@ jobs:
             ruby-full autoconf automake libtool pkg-config \
             python3 git unzip
 
-      # ── 4. Ruby via RVM ───────────────────────────────────────────────────────
-      - name: Install RVM and Ruby ${{ env.RUBY_VERSION }}
-        run: |
-          curl -sSL https://get.rvm.io | bash -s stable --ignore-dotfiles
-          echo 'source $HOME/.rvm/scripts/rvm' >> "$GITHUB_ENV"
-          source "$HOME/.rvm/scripts/rvm"
-          rvm install ${{ env.RUBY_VERSION }}
-          rvm use ${{ env.RUBY_VERSION }} --default
-          ruby -v
-          echo "PATH=$HOME/.rvm/rubies/ruby-${{ env.RUBY_VERSION }}/bin:$PATH" >> "$GITHUB_ENV"
+      # ── 4. Ruby  ──────────────────────────────────────
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
 
       # ── 5. Android SDK ────────────────────────────────────────────────────────
       - name: Set up Android SDK
