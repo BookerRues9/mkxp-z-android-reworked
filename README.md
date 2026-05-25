@@ -1,14 +1,11 @@
 # mkxp-z Android Reworked
 
 [![Android Build](https://github.com/BookerRues9/mkxp-z-android-reworked/workflows/Android%20Build%20%26%20Release/badge.svg)](https://github.com/BookerRues9/mkxp-z-android-reworked/actions/workflows/android.yml)
-[![GitHub release](https://img.shields.io/github/v/release/BookerRues9/mkxp-z-android-reworked)](https://github.com/BookerRues9/mkxp-z-android-reworked/releases)
 [![GitHub downloads](https://img.shields.io/github/downloads/BookerRues9/mkxp-z-android-reworked/total)](https://github.com/BookerRues9/mkxp-z-android-reworked/releases)
 [![GitHub stars](https://img.shields.io/github/stars/BookerRues9/mkxp-z-android-reworked?style=social)](https://github.com/BookerRues9/mkxp-z-android-reworked/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/BookerRues9/mkxp-z-android-reworked?style=social)](https://github.com/BookerRues9/mkxp-z-android-reworked/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/BookerRues9/mkxp-z-android-reworked)](https://github.com/BookerRues9/mkxp-z-android-reworked/issues)
 [![Last Commit](https://img.shields.io/github/last-commit/BookerRues9/mkxp-z-android-reworked)](https://github.com/BookerRues9/mkxp-z-android-reworked/commits/main)
-[![License](https://img.shields.io/github/license/BookerRues9/mkxp-z-android-reworked)](LICENSE)
-
 Android port of [mkxp-z](https://github.com/mkxp-z/mkxp-z) focused on running RPG Maker XP games on Android devices.
 
 ---
