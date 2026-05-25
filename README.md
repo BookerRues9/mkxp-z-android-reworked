@@ -1,8 +1,4 @@
-STATUS
-
-
-[![Actions Status: Android](https://github.com/BookerRues9/mkxp-z-android-reworked/workflows/Android/badge.svg)](https://github.com/BookerRues9/mkxp-z-android-reworked/actions?query=workflow%3A"Android Build & Release")
-
+[![Actions Status](https://github.com/BookerRues9/mkxp-z-android-reworked/workflows/Android%20Build%20%26%20Release/badge.svg)](https://github.com/BookerRues9/mkxp-z-android-reworked/actions?query=workflow%3A"Android+Build+%26+Release")
 
 ENGLISH
 # mkxp-z for Android
