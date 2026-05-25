@@ -62,8 +62,9 @@ Example storage path:
 
 ```txt
 /storage/emulated/0/mkxp-z
-Configuration
+```
 
+Configuration
 You can place a custom configuration file here:
 
 app/jni/mkxp-z/mkxp.json
