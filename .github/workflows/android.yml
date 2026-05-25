@@ -46,7 +46,7 @@ jobs:
       # ── 4. Ruby via RVM ───────────────────────────────────────────────────────
       - name: Install RVM and Ruby ${{ env.RUBY_VERSION }}
         run: |
-          curl -sSL https://get.rvm.io | bash --ignore-dotfiles
+          curl -sSL https://get.rvm.io | bash -s stable --ignore-dotfiles
           echo 'source $HOME/.rvm/scripts/rvm' >> "$GITHUB_ENV"
           source "$HOME/.rvm/scripts/rvm"
           rvm install ${{ env.RUBY_VERSION }}
