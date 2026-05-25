@@ -39,7 +39,7 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y \
-            build-essential cmake curl gpg \
+            build-essential cmake curl gpg xxd \
             ruby-full autoconf automake libtool pkg-config \
             python3 git unzip
 
@@ -69,12 +69,15 @@ jobs:
           echo "ARCH=$ARCH"                            >> "$GITHUB_ENV"
           echo "$TOOLCHAIN"                            >> "$GITHUB_PATH"
 
-      # ── 7. Download JNI dependencies ──────────────────────────────────────────
+      # ── 7. Download JNI dependencies & Generate XXD ──────────────────────────
       - name: Download JNI dependencies (get_deps.sh)
         working-directory: app/jni
         run: |
           chmod +x get_deps.sh
           ./get_deps.sh
+          cd mkxp-z
+          chmod +x make_xxd.sh
+          ./make_xxd.sh
 
       # ── 8. Compile native dependencies (arm64-v8a + armeabi-v7a) ─────────────
       - name: Compile native deps — arm64-v8a (64-bit)
