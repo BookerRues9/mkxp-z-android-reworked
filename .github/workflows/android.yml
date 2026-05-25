@@ -1,0 +1,196 @@
+name: Android Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-22.04
+
+    env:
+      ANDROID_NDK_VERSION: 23.2.8568313
+      RUBY_VERSION: "3.1"
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # ── 2. Java (required by Gradle / Android SDK) ───────────────────────────
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # ── 3. System dependencies ───────────────────────────────────────────────
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            build-essential cmake curl gpg \
+            ruby-full autoconf automake libtool pkg-config \
+            python3 git unzip
+
+      # ── 4. Ruby via RVM ───────────────────────────────────────────────────────
+      - name: Install RVM and Ruby ${{ env.RUBY_VERSION }}
+        run: |
+          curl -sSL https://get.rvm.io | bash --ignore-dotfiles
+          echo 'source $HOME/.rvm/scripts/rvm' >> "$GITHUB_ENV"
+          source "$HOME/.rvm/scripts/rvm"
+          rvm install ${{ env.RUBY_VERSION }}
+          rvm use ${{ env.RUBY_VERSION }} --default
+          ruby -v
+          echo "PATH=$HOME/.rvm/rubies/ruby-${{ env.RUBY_VERSION }}/bin:$PATH" >> "$GITHUB_ENV"
+
+      # ── 5. Android SDK ────────────────────────────────────────────────────────
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK ${{ env.ANDROID_NDK_VERSION }}
+        run: |
+          sdkmanager --install "ndk;${{ env.ANDROID_NDK_VERSION }}"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/${{ env.ANDROID_NDK_VERSION }}" >> "$GITHUB_ENV"
+
+      # ── 6. Export toolchain paths ─────────────────────────────────────────────
+      - name: Export NDK toolchain paths
+        run: |
+          ARCH=linux-x86_64
+          NDK_PATH="$ANDROID_HOME/ndk/${{ env.ANDROID_NDK_VERSION }}"
+          TOOLCHAIN="$NDK_PATH/toolchains/llvm/prebuilt/$ARCH/bin"
+          echo "ANDROID_HOME=$ANDROID_HOME"           >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_HOME=$NDK_PATH"           >> "$GITHUB_ENV"
+          echo "ARCH=$ARCH"                            >> "$GITHUB_ENV"
+          echo "$TOOLCHAIN"                            >> "$GITHUB_PATH"
+
+      # ── 7. Download JNI dependencies ──────────────────────────────────────────
+      - name: Download JNI dependencies (get_deps.sh)
+        working-directory: app/jni
+        run: |
+          chmod +x get_deps.sh
+          ./get_deps.sh
+
+      # ── 8. Compile native dependencies (arm64-v8a + armeabi-v7a) ─────────────
+      - name: Compile native deps — arm64-v8a (64-bit)
+        working-directory: app/jni
+        run: |
+          source "$HOME/.rvm/scripts/rvm"
+          HOST=aarch64-linux-android \
+          TARGET=aarch64-linux-android \
+          ABI=arm64-v8a \
+          make -j$(nproc)
+
+      - name: Compile native deps — armeabi-v7a (32-bit)
+        working-directory: app/jni
+        run: |
+          source "$HOME/.rvm/scripts/rvm"
+          HOST=armv7a-linux-androideabi \
+          TARGET=arm-linux-androideabi \
+          ABI=armeabi-v7a \
+          make -j$(nproc)
+
+      # ── 9. Make Gradle wrapper executable ────────────────────────────────────
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # ── 10. Cache Gradle packages ─────────────────────────────────────────────
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      # ── 11. Build release APK ─────────────────────────────────────────────────
+      - name: Build release APK
+        run: |
+          source "$HOME/.rvm/scripts/rvm"
+          ./gradlew assembleRelease \
+            -Pandroid.suppressUnsupportedCompileSdk=34 \
+            --no-daemon \
+            --stacktrace
+
+      # ── 12. Sign APK (optional — uses secrets when available) ─────────────────
+      - name: Sign APK
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS:       ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD:    ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD:  ${{ secrets.STORE_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > release.keystore
+          APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+          $ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | tail -1)/apksigner sign \
+            --ks release.keystore \
+            --ks-key-alias "$KEY_ALIAS" \
+            --ks-pass "pass:$STORE_PASSWORD" \
+            --key-pass "pass:$KEY_PASSWORD" \
+            --out signed-release.apk \
+            "$APK"
+          echo "APK_PATH=signed-release.apk" >> "$GITHUB_ENV"
+
+      - name: Set unsigned APK path (no signing secrets)
+        if: ${{ env.KEYSTORE_BASE64 == '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+          cp "$APK" unsigned-release.apk
+          echo "APK_PATH=unsigned-release.apk" >> "$GITHUB_ENV"
+
+      # ── 13. Upload APK as artifact (always) ───────────────────────────────────
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mkxp-z-android-apk
+          path: ${{ env.APK_PATH }}
+          retention-days: 30
+
+      # ── 14. Determine release tag ─────────────────────────────────────────────
+      - name: Resolve release tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.release_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── 15. Create GitHub Release and upload APK ──────────────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "mkxp-z Android ${{ steps.tag.outputs.tag }}"
+          body: |
+            ## mkxp-z Android — ${{ steps.tag.outputs.tag }}
+
+            Automated build from commit `${{ github.sha }}`.
+
+            ### Installation
+            1. Download the APK below and install it on your Android device.
+            2. Create the `mkxp-z` folder in internal storage (`/storage/emulated/0/mkxp-z`).
+            3. Copy your RPG Maker XP game files into that folder.
+            4. Run mkxp-z, grant storage access, and enjoy!
+
+            > **Note:** If the APK is unsigned, you may need to enable *Install unknown apps* in your device settings.
+          files: ${{ env.APK_PATH }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
