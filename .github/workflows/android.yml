@@ -11,13 +11,16 @@ on:
         required: true
         default: 'v1.0.0'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build APK
     runs-on: ubuntu-22.04
 
     env:
-      ANDROID_NDK_VERSION: 23.2.8568313
+      ANDROID_NDK_VERSION: 29.0.14206865
       RUBY_VERSION: "3.1"
 
     steps:
@@ -79,27 +82,17 @@ jobs:
           chmod +x make_xxd.sh
           ./make_xxd.sh
 
-      # ── 8. Compile native dependencies (arm64-v8a + armeabi-v7a) ─────────────
+      # ── 8. Compile native dependencies (arm64-v8a) ───────────────────────────
       - name: Compile native deps — arm64-v8a (64-bit)
         working-directory: app/jni
         run: |
           HOST=aarch64-linux-android \
           TARGET=aarch64-linux-android \
           ABI=arm64-v8a \
+          LDFLAGS="-Wl,-z,max-page-size=16384" \
           make -j$(nproc)
           # Asegurar mapeo de carpetas por si acaso
           if [ -d "build-arm64-v8a" ] && [ ! -d "build-arm64" ]; then ln -s build-arm64-v8a build-arm64; fi
-
-      #- name: Compile native deps — armeabi-v7a (32-bit)
-       # working-directory: app/jni
-       # run: |
-        #  HOST=armv7a-linux-androideabi \
-       #   TARGET=arm-linux-androideabi \
-        #  ABI=armeabi-v7a \
-        #  make -j$(nproc)
-          
-       #   if [ -d "build-armv7a" ] && [ ! -d "build-armeabi-v7a" ]; then cp -r build-armv7a build-armeabi-v7a; fi
-       #   if [ -d "build" ] && [ ! -d "build-armeabi-v7a" ]; then cp -r build build-armeabi-v7a; fi
 
       # ── 9. Make Gradle wrapper executable ────────────────────────────────────
       - name: Grant execute permission for gradlew
